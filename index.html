@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fixka - Auto Maintenance Organization</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --primary:      #7B2FA8;
+      --primary-dark: #4B1270;
+      --primary-mid:  #9333EA;
+      --pink:         #D1368C;
+      --pink-hover:   #B02B78;
+      --dark-bg:      #0F0720;
+      --dark-border:  rgba(255,255,255,0.08);
+      --white:        #FFFFFF;
+      --off-white:    #F9F7FF;
+      --light-purple: #F3EAFF;
+      --gray:         #888;
+      --text-dark:    #0F0720;
+      --text-mid:     #4B4565;
+      --border:       #E8E0F0;
+      --font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── SHARED BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 13px 28px; border-radius: 10px;
+      font-family: var(--font); font-weight: 600; font-size: 15px;
+      cursor: pointer; text-decoration: none; border: none;
+      transition: all 0.22s ease;
+    }
+    .btn-pink { background: var(--pink); color: #fff; }
+    .btn-pink:hover { background: var(--pink-hover); transform: translateY(-1px); }
+    .btn-outline-white { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.35); }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.1); }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 30px; left: 30px; right: 30px; z-index: 200;
+      background: #fff;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid #EBEBEB;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 0;
+    }
+    .logo {
+      font-size: 22px; font-weight: 800; color: var(--text-dark);
+      text-decoration: none; letter-spacing: -0.5px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .logo-mark {
+      width: 28px; height: 28px; background: var(--primary);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-mark svg { fill: white; }
+    .nav-waitlist {
+      background: #581845; color: #fff;
+      padding: 16px 38px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-waitlist:hover { background: #CD47A5; }
+
+    /* ── HERO ── */
+    .hero {
+      background: #F0EFED;
+      padding: 140px 60px 0;
+      overflow: hidden;
+      min-height: calc(100vh - 64px);
+      display: flex; align-items: stretch;
+      position: relative;
+    }
+    .hero-inner {
+      max-width: 1200px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 0.8fr 1.4fr;
+      gap: 0; align-items: center;
+    }
+    .hero-left {
+      padding-bottom: 40px;
+      padding-top: 40px;
+      display: flex; flex-direction: column; justify-content: flex-center;
+      margin-top: -56px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 4.2vw, 54px);
+      font-weight: 900; color: #111;
+      letter-spacing: -2px; line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .hero-sub {
+      font-size: 13px; color: #666;
+      max-width: 320px; line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .hero-btn {
+      display: inline-flex; align-items: center;
+      background: #581845; color: #fff;
+      padding: 16px 38px; border-radius: 12px;
+      font-size: 15px; font-weight: 700;
+      text-decoration: none; width: fit-content;
+      transition: background 0.2s;
+    }
+    .hero-btn:hover { background: #CD47A5; }
+
+    /* RIGHT — image + floating cards */
+    .hero-right {
+      position: relative;
+      display: flex; align-items: flex-end; justify-content: right;
+      margin-bottom: -50px;
+    }
+    /* placeholders */
+    .hero-photo {
+      width: 100%;
+      height: 100%;
+      min-height: 650px;
+      display: block;
+      object-fit: cover;
+      object-position: top left;
+      border-radius: 16px 16px 0 0;
+    }
+    .hero-photo-placeholder {
+      width: 100%; max-width: 680px;
+      height: 520px; background: #DDD8D2;
+      border-radius: 16px 16px 0 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: left;
+      gap: 12px; color: #aaa; text-align: center; padding: 20px;
+    }
+    .hero-photo-placeholder .ph-icon { font-size: 52px; opacity: 0.4; }
+    .hero-photo-placeholder .ph-label { font-size: 13px; font-weight: 600; }
+    .img-placeholder {
+      width: 100%; background: #E2DDD8;
+      border-radius: 16px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; color: #999; font-size: 13px; font-weight: 500;
+      text-align: center; padding: 20px;
+    }
+    .img-placeholder-icon { font-size: 36px; opacity: 0.5; }
+
+    /* floating card: "Find nearby garages" */
+    .card-garages {
+      position: absolute; top: 32px; left: 20px;
+      background: #fff; border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      display: flex; flex-direction: column; gap: 10px;
+      min-width: 240px; z-index: 20;
+    }
+    .card-garages-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; color: #111;
+    }
+    .card-garages-title span { font-size: 15px; color: var(--primary); }
+    .card-garage-avatars { display: flex; align-items: center; gap: 4px; }
+    .card-garage-avatars img {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1.5px solid #fff; margin-left: -6px; object-fit: cover;
+    }
+    .card-garage-avatars img:first-child { margin-left: 0; }
+    .card-garage-more {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      background: var(--light-purple); border-radius: 20px;
+      padding: 3px 8px; margin-left: 6px;
+    }
+
+    /* floating card: "Track request" */
+    .card-track {
+      position: absolute; bottom: 60px; right: 20px;
+      background: #fff; border-radius: 14px;
+      padding: 16px 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      min-width: 260px; z-index: 20;
+    }
+    .card-track-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px;
+    }
+    .card-track-header span:first-child { font-size: 13px; font-weight: 700; color: #111; }
+    .card-track-eta {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600; color: var(--primary);
+      background: var(--light-purple); border-radius: 20px; padding: 3px 10px;
+    }
+    .card-track-eta::before { content: "●"; font-size: 8px; color: #22c55e; }
+    .card-track-bar { display: flex; align-items: center; gap: 6px; }
+    .track-line {
+      flex: 1; height: 3px; background: #E8E0F0; border-radius: 2px;
+      position: relative; overflow: visible;
+    }
+    .track-line-fill {
+      position: absolute; left: 0; top: 0; height: 100%;
+      width: 55%; background: var(--primary); border-radius: 2px;
+    }
+    .track-truck {
+      position: absolute; left: 52%; top: 50%; transform: translate(-50%, -50%);
+      font-size: 16px;
+    }
+    .track-dot-start, .track-dot-end {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .track-dot-start { background: var(--primary); }
+    .track-dot-end { background: #E8E0F0; border: 2px solid #ccc; }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      background: #fff; border-top: 1px solid #EBEBEB;
+      padding: 18px 0; overflow: hidden;
+    }
+    .marquee-track {
+      display: flex; gap: 32px; align-items: center;
+      animation: marquee 22s linear infinite; white-space: nowrap;
+    }
+    .marquee-track span { font-size: 14px; font-weight: 600; color: var(--primary); letter-spacing: 0.2px; }
+    .marquee-track .dot { color: var(--primary); font-size: 10px; opacity: 0.6; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── SECTION SHARED ── */
+    .section-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--primary); margin-bottom: 14px; }
+    .section-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: var(--text-dark); letter-spacing: -1.2px; line-height: 1.2; margin-bottom: 16px; }
+    .section-sub { font-size: 16px; color: var(--text-mid); max-width: 520px; margin: 0 auto 56px; line-height: 1.75; }
+
+    /* ── HOW IT WORKS ── */
+    .how { background: var(--off-white); padding: 100px 40px; text-align: center; }
+    .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; max-width: 1100px; margin: 0 auto; }
+    .how-card {
+      background: #fff; border-radius: 20px; padding: 40px 32px;
+      text-align: center; border: 1px solid var(--border);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .how-card:hover { transform: translateY(-5px); box-shadow: 0 20px 60px rgba(123,47,168,0.1); }
+    .how-icon-placeholder {
+      width: 100%; height: 180px; border-radius: 14px; margin-bottom: 24px;
+      background: #EDE9F0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; color: #bbb; font-size: 12px; font-weight: 500; text-align: center;
+    }
+    .how-icon-placeholder .ph-em { font-size: 40px; opacity: 0.45; }
+    .how-card-img {
+      width: 100%; height: 180px;
+      object-fit: contain; object-position: center;
+      border-radius: 14px; margin-bottom: 24px;
+      display: block; overflow: hidden;
+    }
+    .how-card h3 {
+      font-size: 16px; font-weight: 800; color: var(--text-dark);
+      margin-bottom: 10px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .how-card p {
+      font-size: 14px; color: var(--text-mid); line-height: 1.75;
+      max-width: 280px; margin: 0 auto;
+      display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+      overflow: hidden; min-height: calc(1.75em * 4);
+    }
+
+    /* ── QUOTE SECTION ── */
+    .quote-section { background: var(--dark-bg); padding: 100px 40px; }
+    .quote-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: start; }
+    .quote-left h2 { font-size: clamp(28px, 3.5vw, 40px); font-weight: 800; color: #fff; letter-spacing: -1px; line-height: 1.25; margin-bottom: 16px; }
+    .quote-left h2 em { font-style: normal; color: var(--pink); }
+    .quote-left > p { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.75; margin-bottom: 28px; }
+    .quote-tabs {
+      display: flex; border-radius: 12px; overflow: hidden;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--dark-border);
+      margin-bottom: 24px; width: fit-content;
+    }
+    .quote-tab { padding: 11px 28px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer; transition: all 0.2s; border: none; background: none; font-family: var(--font); }
+    .quote-tab.active { background: var(--pink); color: #fff; border-radius: 10px; }
+    .quote-tab-content { display: none; }
+    .quote-tab-content.active { display: block; }
+    .quote-tab-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 20px; }
+    .quote-form-wrap { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 20px; padding: 36px; }
+    .quote-form-wrap h3 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .quote-form-wrap > p { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.35); margin-bottom: 7px; letter-spacing: 1px; text-transform: uppercase; }
+    .form-group input, .form-group select {
+      width: 100%; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 10px;
+      padding: 13px 16px; font-family: var(--font); font-size: 14px; color: #fff;
+      outline: none; transition: border-color 0.2s; -webkit-appearance: none;
+    }
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+    }
+    .form-group select option { background: #1a0a2e; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--primary-mid); }
+    .form-group input::placeholder { color: rgba(255,255,255,0.2); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-submit {
+      width: 100%; padding: 15px; margin-top: 6px;
+      background: var(--pink); color: #fff; border: none; border-radius: 10px;
+      font-family: var(--font); font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .form-submit:hover { background: var(--pink-hover); }
+    .contact-link { display: block; text-align: center; margin-top: 14px; font-size: 13px; color: rgba(255,255,255,0.3); }
+    .contact-link a { color: var(--pink); text-decoration: underline; }
+
+    /* ── PLANS ── */
+    .plans { background: var(--off-white); padding: 100px 40px; text-align: center; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .plan-card {
+      background: #fff; border-radius: 20px; padding: 36px 28px; text-align: left;
+      border: 1.5px solid var(--border); position: relative;
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column;
+    }
+    .plan-card:hover { transform: translateY(-4px); box-shadow: 0 24px 64px rgba(123,47,168,0.12); }
+    .plan-card.popular { border-color: var(--primary); background: var(--dark-bg); }
+    .plan-card.popular .plan-name { color: var(--pink); }
+    .plan-card.popular .plan-desc { color: rgba(255,255,255,0.5); }
+    .plan-card.popular .plan-divider { background: rgba(255,255,255,0.1); }
+    .plan-card.popular .plan-feature { color: rgba(255,255,255,0.8); }
+    .plan-card.popular .plan-feature::before { color: var(--pink) !important; }
+    .popular-tag {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--pink); color: #fff;
+      font-size: 11px; font-weight: 700; padding: 4px 18px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .plan-name { font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; }
+    .plan-desc { font-size: 11.5px; color: var(--text-mid); line-height: 1.65; margin-bottom: 20px; }
+    .plan-cta-top {
+      width: 100%; padding: 12px; border-radius: 10px;
+      font-family: var(--font); font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; text-align: center;
+      display: block; text-decoration: none; margin-bottom: 20px;
+    }
+    .plan-cta-outline { background: transparent; border: 1.5px solid var(--border); color: var(--primary); }
+    .plan-cta-outline:hover { border-color: var(--primary); background: var(--light-purple); }
+    .plan-cta-filled { background: var(--pink); color: #fff; border: none; }
+    .plan-cta-filled:hover { background: var(--pink-hover); }
+    .plan-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+    .plan-features { list-style: none; flex: 1; }
+    .plan-feature { font-size: 13px; color: var(--text-dark); padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .plan-feature::before { content: "✓"; color: var(--primary); font-weight: 800; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── WORKSHOP ── */
+    .workshop { background: #581845; padding: 50px 40px 0; overflow: hidden; }
+    .workshop-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: flex-end; }
+    .workshop-content { padding-bottom: 80px; }
+    .workshop-content .section-eyebrow { color: rgba(255,255,255,0.5); }
+    .workshop-content h2 { font-size: clamp(28px,3.5vw,42px); font-weight: 800; color: #fff; letter-spacing: -1px; line-height: 1.2; margin-bottom: 16px; }
+    .workshop-content h2 em { font-style: normal; color: var(--pink); }
+    .workshop-content p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.75; margin-bottom: 32px; }
+    .workshop-image { align-self: flex-end; }
+    .workshop-image img { width: 100%; display: block; border-radius: 20px 20px 0 0; }
+
+    /* ── FAQ ── */
+    .faq { background: var(--off-white); padding: 100px 40px; }
+    .faq-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+    .faq-list { text-align: left; margin-top: 48px; }
+    .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+    .faq-question { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; font-size: 15px; color: var(--text-dark); user-select: none; gap: 16px; }
+    .faq-arrow { font-size: 18px; color: var(--primary); transition: transform 0.25s; flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .faq-item.open .faq-answer { max-height: 300px; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: 14px; color: var(--text-mid); line-height: 1.75; }
+
+    /* ── FOOTER ── */
+    footer { background: #581845; padding: 60px 40px 0; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.12); flex-wrap: wrap; gap: 20px; }
+    .footer-logo { font-size: 28px; font-weight: 900; color: #fff; letter-spacing: -1px; }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.25); padding: 28px 0; text-align: center; }
+    .footer-watermark { font-size: 100px; font-weight: 900; color: rgba(255,255,255,0.05); letter-spacing: -5px; text-align: center; line-height: 1; padding-top: 4px; user-select: none; }
+
+    /* ── WAITLIST MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #fff; border-radius: 20px; padding: 40px 36px;
+      width: 100%; max-width: 420px; margin: 20px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.18);
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.28s ease;
+      position: relative;
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+    .modal-close {
+      position: absolute; top: 16px; right: 18px;
+      background: none; border: none; cursor: pointer;
+      font-size: 20px; color: #aaa; line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: #333; }
+    .modal-logo { font-size: 20px; font-weight: 900; color: var(--text-dark); letter-spacing: -0.5px; margin-bottom: 6px; }
+    .modal h2 { font-size: 22px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; margin-bottom: 6px; }
+    .modal-sub { font-size: 13px; color: #999; margin-bottom: 28px; line-height: 1.6; }
+    .modal-field {
+      width: 100%; padding: 15px 18px;
+      border: 1.5px solid #E8E8E8; border-radius: 12px;
+      font-family: var(--font); font-size: 15px; color: #333;
+      outline: none; margin-bottom: 14px;
+      transition: border-color 0.2s; background: #fff;
+    }
+    .modal-field::placeholder { color: #bbb; }
+    .modal-field:focus { border-color: #CD47A5; }
+    .modal-join {
+      width: 100%; padding: 15px;
+      background: #CD47A5; color: #fff;
+      border: none; border-radius: 12px;
+      font-family: var(--font); font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 4px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .modal-join:hover { background: #B02B78; transform: translateY(-1px); }
+    .modal-success { text-align: center; padding: 16px 0 8px; display: none; }
+    .modal-success .success-icon { font-size: 48px; margin-bottom: 12px; }
+    .modal-success h3 { font-size: 20px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+    .modal-success p { font-size: 14px; color: #888; line-height: 1.6; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .how-grid, .plans-grid { grid-template-columns: 1fr; }
+      .quote-inner, .workshop-inner { grid-template-columns: 1fr; }
+      nav { top: 16px; left: 16px; right: 16px; padding: 0 16px; }
+      .hero { padding: 120px 24px 0; min-height: auto; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-left { padding: 40px 0 32px; }
+      .hero-right { min-height: 480px; position: relative; }
+      .card-garages {
+        top: 16px; left: 12px;
+        min-width: 0; width: auto;
+        max-width: calc(100% - 24px);
+        padding: 10px 14px;
+        z-index: 20;
+      }
+      .card-track {
+        bottom: 24px; right: 12px; left: auto;
+        min-width: 0; width: auto;
+        max-width: calc(100% - 24px);
+        padding: 12px 14px;
+        z-index: 20;
+      }
+      .how, .quote-section, .plans, .workshop, .faq { padding: 70px 20px; }
+      footer { padding: 50px 20px 0; }
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .hero-photo { min-height: 480px; }
+      .card-garages-title { font-size: 11px; }
+      .card-track-header span:first-child { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#home">
+  <img src="logo.png" alt="Fixka" style="height: 32px;" />
+</a>
+      <a href="#" onclick="event.preventDefault(); openModal();" class="nav-waitlist">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="home">
+    <div class="hero-inner">
+
+      <!-- LEFT TEXT -->
+      <div class="hero-left">
+        <h1>Drive without<br/>repair worries</h1>
+        <p class="hero-sub">Vehicle care for you or your team, covering routine servicing, essential repairs, and smart support that helps you stay ahead of problems.</p>
+        <a href="#" onclick="event.preventDefault(); openModal();" class="hero-btn">Join Waitlist</a>
+      </div>
+
+      <!-- RIGHT IMAGE + FLOATING CARDS -->
+      <div class="hero-right">
+
+        <!-- Floating card: Find garages -->
+        <div class="card-garages">
+          <div class="card-garages-title">
+            <span>📍</span> Find nearby fixka-certified garages
+          </div>
+          <div class="card-garage-avatars">
+            <img src="https://framerusercontent.com/images/YX5vjlDKcoYGZGRv8FURR5Sthek.jpeg" alt=""/>
+            <img src="https://framerusercontent.com/images/C20J43VCGPMPkQpfSncMbmRaZo.jpeg" alt=""/>
+            <img src="https://framerusercontent.com/images/DaikPeq3wpn90QuIBtERY5R4r0.jpeg" alt=""/>
+            <img src="https://framerusercontent.com/images/6avjqTffTpVGzstorjk5SqFjXpU.jpeg" alt=""/>
+            <img src="https://framerusercontent.com/images/ARIet9m3vQrWfYJvWbPeg4ElA.jpeg" alt=""/>
+            <span class="card-garage-more">+6</span>
+          </div>
+        </div>
+
+        <!-- Hero photo placeholder -->
+       <img
+  class="hero-photo"
+  src="images/hero.png"
+  alt="Fixka hero"
+/>
+        </div>
+
+        <!-- Floating card: Track request -->
+        <div class="card-track">
+          <div class="card-track-header">
+            <span>Track request status</span>
+            <div class="card-track-eta">Arrives in 5mins</div>
+          </div>
+          <div class="card-track-bar">
+            <div class="track-dot-start"></div>
+            <div class="track-line">
+              <div class="track-line-fill"></div>
+              <div class="track-truck">🚗</div>
+            </div>
+            <div class="track-dot-end"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- Bottom blur overlay -->
+    <div style="
+      position: absolute; 
+      bottom: 0; left: 0; right: 0;
+      height: 250px;
+      background: linear-gradient(to top, rgba(240,239,237,1) 40%, rgba(240,239,237,0) 100%);
+      pointer-events: none;
+      z-index: 10;
+    "></div>
+  </section>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>No Surprise Bills</span><span class="dot">●</span>
+      <span>Verified Workshops</span><span class="dot">●</span>
+      <span>Cashless Repairs</span><span class="dot">●</span>
+      <span>Smart Reminders</span><span class="dot">●</span>
+      <span>24/7 Support</span><span class="dot">●</span>
+      <span>Flexible Plans</span><span class="dot">●</span>
+      <span>No Surprise Bills</span><span class="dot">●</span>
+      <span>Verified Workshops</span><span class="dot">●</span>
+      <span>Cashless Repairs</span><span class="dot">●</span>
+      <span>Smart Reminders</span><span class="dot">●</span>
+      <span>24/7 Support</span><span class="dot">●</span>
+      <span>Flexible Plans</span><span class="dot">●</span>
+    </div>
+  </div>
+
+  <!-- ═══ HOW IT WORKS ═══ -->
+  <section class="how" id="how">
+    <p class="section-eyebrow">Simple Process</p>
+    <h2 class="section-title">How Fixka helps your vehicle maintenance</h2>
+    <div class="how-grid">
+
+      <div class="how-card">
+        <!-- ✏️ CARD 1 IMAGE: replace "images/how-1.png" with your image filename -->
+        <img src="images/how-1.png" alt="Get Your Plan Quote" class="how-card-img"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="how-icon-placeholder" style="display:none;">
+          <div class="ph-em">🖼️</div>
+          <span>Add images/how-1.png</span>
+        </div>
+        <h3>Get Your Plan Quote</h3>
+        <p>Tell us a few details about your car or fleet, and we'll recommend the best maintenance plan for your needs.</p>
+      </div>
+
+      <div class="how-card">
+        <!-- ✏️ CARD 2 IMAGE: replace "images/how-2.png" with your image filename -->
+        <img src="images/how-2.png" alt="Subscribe and Get Covered" class="how-card-img"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="how-icon-placeholder" style="display:none;">
+          <div class="ph-em">🖼️</div>
+          <span>Add images/how-2.png</span>
+        </div>
+        <h3>Subscribe and Get Covered</h3>
+        <p>Subscribe on your Fixka plan and receive your digital Fixka ID, your pass to trusted workshops and repair coverage.</p>
+      </div>
+
+      <div class="how-card">
+        <!-- ✏️ CARD 3 IMAGE: replace "images/how-3.png" with your image filename -->
+        <img src="images/how-3.png" alt="Repair Without Paying" class="how-card-img"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="how-icon-placeholder" style="display:none;">
+          <div class="ph-em">🖼️</div>
+          <span>Add images/how-3.png</span>
+        </div>
+        <h3>Repair Without Paying</h3>
+        <p>Visit any Fixka-certified mechanic, show your Fixka ID, and get your car serviced or repaired, no payment hassles.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ QUOTE SECTION ═══ -->
+  <section class="quote-section" id="getquote">
+    <div class="quote-inner">
+      <div class="quote-left">
+        <h2>Tired of Surprise Car Breakdowns &amp; <em>Emergency Repairs?</em></h2>
+        <p>Get a personalised quote for yourself or your company fleet. It takes less than 2 minutes.</p>
+        <div class="quote-tabs">
+          <button class="quote-tab active" onclick="switchTab('individual', this)">Individual</button>
+          <button class="quote-tab" onclick="switchTab('corporate', this)">Corporate</button>
+        </div>
+        <div id="tab-individual" class="quote-tab-content active">
+          <p class="quote-tab-desc">Reliable, stress-free maintenance for your personal car.</p>
+        </div>
+        <div id="tab-corporate" class="quote-tab-content">
+          <p class="quote-tab-desc">Comprehensive auto care for your business and your people. Perfect for company fleets and employee vehicle perks.</p>
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=fixka.info@gmail.com" target="_blank" class="btn btn-outline-white">Contact Us →</a>
+        </div>
+      </div>
+
+      <div class="quote-form-wrap">
+        <h3>Get your free quote!</h3>
+        <p>Fill in your details below and we'll get back to you shortly</p>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" placeholder="e.g. Chidi Okonkwo"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" placeholder="+234 800 000 0000"/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="you@email.com"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Vehicle Make</label>
+            <select>
+              <option value="">Select make</option>
+              <option>Toyota</option>
+              <option>Honda</option>
+              <option>Ford</option>
+              <option>Mercedes-Benz</option>
+              <option>Hyundai</option>
+              <option>Kia</option>
+              <option>Volkswagen</option>
+              <option>Nissan</option>
+              <option>Mazda</option>
+              <option>Mitsubishi</option>
+              <option>Suzuki</option>
+              <option>Lexus</option>
+              <option>BMW</option>
+              <option>Audi</option>
+              <option>Peugeot</option>
+              <option>Renault</option>
+              <option>Chevrolet</option>
+              <option>Jeep</option>
+              <option>Land Rover</option>
+              <option>Isuzu</option>
+              <option>Subaru</option>
+              <option>Volvo</option>
+              <option>Infiniti</option>
+              <option>Acura</option>
+              <option>Porsche</option>
+              <option>GAC</option>
+              <option>Chery</option>
+              <option>CFAO</option>
+              <option>BYD</option>
+              <option>Innoson</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Vehicle Model</label>
+            <input type="text" placeholder="e.g. Corolla, Civic"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Year</label>
+            <select>
+              <option value="">Select year</option>
+              <option>2024</option><option>2023</option><option>2022</option>
+              <option>2021</option><option>2020</option><option>2019</option>
+              <option>2018</option><option>2017</option><option>2015 or earlier</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mileage Range</label>
+            <select>
+              <option value="">Select mileage range</option>
+              <option value="0-20000">Under 20,000 km</option>
+              <option value="20000-50000">20,000 – 50,000 km</option>
+              <option value="50000-80000">50,000 – 80,000 km</option>
+              <option value="80000-120000">80,000 – 120,000 km</option>
+              <option value="120000-160000">120,000 – 160,000 km</option>
+              <option value="160000-200000">160,000 – 200,000 km</option>
+              <option value="200000+">Over 200,000 km</option>
+            </select>
+          </div>
+        </div>
+        <button class="form-submit" onclick="submitQuoteForm(event)">Get My Free Quote →</button>
+        <p class="contact-link">Have questions? <a href="https://mail.google.com/mail/?view=cm&fs=1&to=fixka.info@gmail.com" target="_blank">Email us directly</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PLANS ═══ -->
+  <section class="plans" id="plans">
+    <p class="section-sub" style="margin-bottom:12px; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--primary); max-width:none;">Choose the Level of Care Your Vehicle Deserves</p>
+    <h2 class="section-title" style="margin-bottom:56px;">Compare Our Vehicle Care Plans</h2>
+    <div class="plans-grid">
+
+      <!-- Essential -->
+      <div class="plan-card">
+        <div class="plan-name">Essential</div>
+        <p class="plan-desc">Reliable vehicle care to keep your car running smoothly with routine maintenance support.</p>
+        <a href="#getquote" onclick="scrollToQuote(event)" class="plan-cta-top plan-cta-outline">Get free quote</a>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li class="plan-feature">Oil Change</li>
+          <li class="plan-feature">Filter Replacement</li>
+          <li class="plan-feature">Spark Plug Replacement</li>
+          <li class="plan-feature">Fluid Top-Up</li>
+          <li class="plan-feature">Wheel Alignment</li>
+          <li class="plan-feature">Wheel Balancing</li>
+          <li class="plan-feature">Fault Code Scan</li>
+          <li class="plan-feature">Battery Charging</li>
+          <li class="plan-feature">Air Filter Replacement</li>
+          <li class="plan-feature">Throttle Body Cleaning</li>
+          <li class="plan-feature">Coolant Flush</li>
+          <li class="plan-feature">AC Gas Refill</li>
+        </ul>
+      </div>
+
+      <!-- Pro -->
+      <div class="plan-card popular">
+        <div class="popular-tag">Popular</div>
+        <div class="plan-name">Pro</div>
+        <p class="plan-desc">Enhanced maintenance coverage with faster service access and priority support.</p>
+        <a href="#getquote" onclick="scrollToQuote(event)" class="plan-cta-top plan-cta-filled">Get free quote</a>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li class="plan-feature">Everything in Essential</li>
+          <li class="plan-feature">Brake Pad Replacement</li>
+          <li class="plan-feature">Brake Rotor Replacement</li>
+          <li class="plan-feature">Shock Absorber Replacement</li>
+          <li class="plan-feature">Tie Rod Replacement</li>
+          <li class="plan-feature">Ball Joint Replacement</li>
+          <li class="plan-feature">Control Arm Replacement</li>
+          <li class="plan-feature">Water Pump Replacement</li>
+          <li class="plan-feature">Thermostat Replacement</li>
+          <li class="plan-feature">Radiator Repair</li>
+          <li class="plan-feature">Alternator Repair / Replacement</li>
+          <li class="plan-feature">Starter Motor Repair</li>
+          <li class="plan-feature">Sensor Replacement</li>
+          <li class="plan-feature">Power Window Repair</li>
+          <li class="plan-feature">Lighting System Repairs</li>
+          <li class="plan-feature">Fuel Injector Cleaning</li>
+          <li class="plan-feature">Towing</li>
+        </ul>
+      </div>
+
+      <!-- Elite -->
+      <div class="plan-card">
+        <div class="plan-name">Elite</div>
+        <p class="plan-desc">Complete peace of mind, premium maintenance coverage, priority service, and exclusive benefits.</p>
+        <a href="#getquote" onclick="scrollToQuote(event)" class="plan-cta-top plan-cta-outline">Get free quote</a>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li class="plan-feature">Everything in Pro</li>
+          <li class="plan-feature">Clutch Replacement</li>
+          <li class="plan-feature">Driveshaft Repair</li>
+          <li class="plan-feature">CV Joint Replacement</li>
+          <li class="plan-feature">Engine Mount Replacement</li>
+          <li class="plan-feature">Timing Belt Replacement</li>
+          <li class="plan-feature">Cooling Fan Repair</li>
+          <li class="plan-feature">Power Steering Pump Repair</li>
+          <li class="plan-feature">Muffler Replacement</li>
+          <li class="plan-feature">Exhaust Pipe Repair</li>
+          <li class="plan-feature">AC Blower Motor Repair</li>
+          <li class="plan-feature">Parking Sensor Repair</li>
+          <li class="plan-feature">Reverse Camera Repair</li>
+          <li class="plan-feature">Battery Replacement</li>
+          <li class="plan-feature">Alternator Repair</li>
+          <li class="plan-feature">Starter Motor Repair</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ WORKSHOP ═══ -->
+  <section class="workshop" id="workshops">
+    <div class="workshop-inner">
+      <div class="workshop-content">
+        <p class="section-eyebrow">Our Network</p>
+        <h2>Join a trusted network of <em>verified workshops / garages</em></h2>
+        <p>Serving thousands of drivers who already rely on Fixka. Get more customers, faster payments, and tools to manage your service better.</p>
+        <a href="#" onclick="event.preventDefault(); openPartnerModal();" class="btn btn-pink">Become a Partner →</a>
+      </div>
+      <div class="workshop-image">
+        <!-- ✏️ WORKSHOP IMAGE: replace "images/workshop.jpg" with your image filename -->
+        <img src="images/workshop.png" alt="Verified workshops" style="width:100%; display:block; border-radius:20px;"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="img-placeholder" style="height:420px; display:none;">
+          <div class="img-placeholder-icon">👷🏾‍♂️🔧</div>
+          <span>Add images/workshop.jpg<br/>
+            <span style="font-weight:400;font-size:12px;color:#bbb;">Recommended: mechanics or workshop photo, PNG/JPG</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FAQ ═══ -->
+  <section class="faq" id="faq">
+    <div class="faq-inner">
+      <p class="section-eyebrow">FAQ</p>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+
+        <div class="faq-item open">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            What's the difference between Fixka and car insurance?
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Car insurance covers damage from accidents, theft, or third-party liability. Fixka covers vehicle maintenance and mechanical repairs — the everyday costs that keep your car running smoothly. Think of Fixka as a maintenance subscription, not an accident policy. Many drivers use both together for complete peace of mind.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            What exactly does Fixka cover?
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Fixka covers routine maintenance services and mechanical repairs depending on your chosen plan. Essential covers basic servicing. Pro adds brake work, suspension, electrical, and towing. Elite covers everything including clutch, drivetrain, timing belt, and advanced components. See the full breakdown in the pricing section above.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            How do I get my vehicle repaired with Fixka?
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Once subscribed, you receive a digital Fixka ID. When you need a repair, visit any Fixka-certified garage, show your Fixka ID, and the garage handles everything. Fixka pays the workshop directly — no cash needed, no reimbursement delays. You can also use the Fixka app to find your nearest certified garage and track your service in real time.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo">
+  <img src="logo-white.png" alt="Fixka" style="height: 32px;" />
+</div>
+        <a href="#" onclick="event.preventDefault(); openModal();" class="btn btn-pink">Join Waitlist</a>
+      </div>
+      <p class="footer-copy">© 2025 Rapidtech Solutions Limited. All Rights Reserved</p>
+      <div class="footer-watermark">fixka</div>
+    </div>
+  </footer>
+
+  <!-- ═══ WAITLIST MODAL ═══ -->
+  <div class="modal-overlay" id="waitlistModal" onclick="closeModalOnOverlay(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+      <div id="modalForm">
+        <h2>Join the Waitlist</h2>
+        <p class="modal-sub">Be the first to know when we launch. No spam, ever.</p>
+        <input class="modal-field" type="text" id="modalName" placeholder="Full Name"/>
+        <input class="modal-field" type="email" id="modalEmail" placeholder="Enter Email Address"/>
+        <button class="modal-join" onclick="submitWaitlist()">Join &nbsp;→</button>
+      </div>
+      <div class="modal-success" id="modalSuccess">
+        <div class="success-icon">🎉</div>
+        <h3>You're on the list!</h3>
+        <p>Thanks for joining. We'll reach out as soon as Fixka is ready for you.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PARTNER MODAL ═══ -->
+  <div class="modal-overlay" id="partnerModal" onclick="closePartnerModalOnOverlay(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closePartnerModal()" aria-label="Close">✕</button>
+      <div id="partnerForm">
+        <h2>Become a Partner</h2>
+        <p class="modal-sub">Join our trusted network of verified workshops and garages.</p>
+        <input class="modal-field" type="text" id="partnerName" placeholder="Full Name"/>
+        <input class="modal-field" type="email" id="partnerEmail" placeholder="Enter Email Address"/>
+        <input class="modal-field" type="tel" id="partnerPhone" placeholder="Phone Number"/>
+        <button class="modal-join" onclick="submitPartner()">Join &nbsp;→</button>
+      </div>
+      <div class="modal-success" id="partnerSuccess">
+        <div class="success-icon">🔧</div>
+        <h3>Application received!</h3>
+        <p>Thanks for your interest. Our team will be in touch with you shortly.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ JAVASCRIPT ═══ -->
+    <script>
+    /* ── FAQ accordion ── */
+    function toggleFaq(el) {
+      const item = el.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    /* ── Quote tab switcher ── */
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.quote-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.quote-tab-content').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    /* ── Smooth scroll to quote form (offset for floating nav) ── */
+    function scrollToQuote(e) {
+      e.preventDefault();
+      const target = document.getElementById('getquote');
+      const navHeight = 64 + 30 + 16;
+      const top = target.getBoundingClientRect().top + window.scrollY - navHeight;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+
+    /* ── Waitlist modal ── */
+    function openModal() {
+      document.getElementById('waitlistModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('modalForm').style.display = 'block';
+      document.getElementById('modalSuccess').style.display = 'none';
+      document.getElementById('modalName').value = '';
+      document.getElementById('modalEmail').value = '';
+    }
+    function closeModal() {
+      document.getElementById('waitlistModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closeModalOnOverlay(e) {
+      if (e.target === document.getElementById('waitlistModal')) closeModal();
+    }
+    async function submitWaitlist() {
+  const name  = document.getElementById('modalName').value.trim();
+  const email = document.getElementById('modalEmail').value.trim();
+  if (!name)  { document.getElementById('modalName').focus(); return; }
+  if (!email || !email.includes('@')) { document.getElementById('modalEmail').focus(); return; }
+  const btn = document.querySelector('#modalForm .modal-join');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  await fetch('https://script.google.com/macros/s/AKfycbwoBtOFBiaQfKBlzL02PdkWhqyLDNvwTzq7uX8BArJOngZdyKjuSJjNdanvUbbK9P_izQ/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+  headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ formType: 'waitlist', name, email })
+  });
+  document.getElementById('modalForm').style.display = 'none';
+  document.getElementById('modalSuccess').style.display = 'block';
+}
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { closeModal(); closePartnerModal(); }
+    });
+
+    /* ── Partner modal ── */
+    function openPartnerModal() {
+      document.getElementById('partnerModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('partnerForm').style.display = 'block';
+      document.getElementById('partnerSuccess').style.display = 'none';
+      document.getElementById('partnerName').value = '';
+      document.getElementById('partnerEmail').value = '';
+      document.getElementById('partnerPhone').value = '';
+    }
+    function closePartnerModal() {
+      document.getElementById('partnerModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closePartnerModalOnOverlay(e) {
+      if (e.target === document.getElementById('partnerModal')) closePartnerModal();
+    }
+    async function submitPartner() {
+  const name  = document.getElementById('partnerName').value.trim();
+  const email = document.getElementById('partnerEmail').value.trim();
+  const phone = document.getElementById('partnerPhone').value.trim();
+  if (!name)  { document.getElementById('partnerName').focus();  return; }
+  if (!email || !email.includes('@')) { document.getElementById('partnerEmail').focus(); return; }
+  if (!phone) { document.getElementById('partnerPhone').focus(); return; }
+  const btn = document.querySelector('#partnerForm .modal-join');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  await fetch('https://script.google.com/macros/s/AKfycbwoBtOFBiaQfKBlzL02PdkWhqyLDNvwTzq7uX8BArJOngZdyKjuSJjNdanvUbbK9P_izQ/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+  headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ formType: 'partner', name, email, phone })
+  });
+  document.getElementById('partnerForm').style.display = 'none';
+  document.getElementById('partnerSuccess').style.display = 'block';
+}
+/* ── Quote form ── */
+    async function submitQuoteForm(e) {
+      e.preventDefault();
+      const btn = document.querySelector('.form-submit');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      const data = {
+        formType: 'quote',
+        name:     document.querySelector('input[placeholder="e.g. Chidi Okonkwo"]').value,
+        phone:    document.querySelector('input[type="tel"]').value,
+        email:    document.querySelector('input[type="email"]').value,
+        make:     document.querySelectorAll('select')[0].value,
+        model:    document.querySelector('input[placeholder="e.g. Corolla, Civic"]').value,
+        year:     document.querySelectorAll('select')[1].value,
+        mileage:  document.querySelectorAll('select')[2].value,
+      };
+      await fetch('https://script.google.com/macros/s/AKfycbwoBtOFBiaQfKBlzL02PdkWhqyLDNvwTzq7uX8BArJOngZdyKjuSJjNdanvUbbK9P_izQ/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+  headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(data)
+      });
+      btn.textContent = '✅ Sent! Check your email.';
+    }
+  </script>
+
+</body>
+</html>
