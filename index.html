@@ -83,7 +83,7 @@
     /* ── HERO ── */
     .hero {
       background: #F0EFED;
-      padding: 140px 60px 0;
+      padding: 140px 0 0 60px;
       overflow: hidden;
       min-height: calc(100vh - 64px);
       display: flex; align-items: stretch;
@@ -95,10 +95,12 @@
       gap: 0; align-items: center;
     }
     .hero-left {
-      padding-bottom: 40px;
-      padding-top: 40px;
+      padding-bottom: 65px;
+      padding-top: 30px;
       display: flex; flex-direction: column; justify-content: flex-center;
       margin-top: -56px;
+      position: relative;
+  z-index: 11;
     }
     .hero h1 {
       font-size: clamp(32px, 4.2vw, 54px);
@@ -134,7 +136,7 @@
       min-height: 650px;
       display: block;
       object-fit: cover;
-      object-position: top left;
+      object-position: 8% top;
       border-radius: 16px 16px 0 0;
     }
     .hero-photo-placeholder {
@@ -454,8 +456,7 @@
         min-width: 0; width: auto;
         max-width: calc(100% - 24px);
         padding: 10px 14px;
-        z-index: 20;
-      }
+        z-index: 20;}
       .card-track {
         bottom: 24px; right: 12px; left: auto;
         min-width: 0; width: auto;
@@ -464,6 +465,10 @@
         z-index: 20;
       }
       .how, .quote-section, .plans, .workshop, .faq { padding: 70px 20px; }
+      .workshop { padding: 60px 20px 0; }
+  .workshop-inner { align-items: flex-end; }
+  .workshop-image { width: 100%; }
+  .workshop-image img { border-radius: 16px 16px 0 0; }
       footer { padding: 50px 20px 0; }
     }
     @media (max-width: 600px) {
