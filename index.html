@@ -962,12 +962,23 @@
     }
 
     /* ── Quote tab switcher ── */
-    function switchTab(tab, btn) {
-      document.querySelectorAll('.quote-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.quote-tab-content').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('tab-' + tab).classList.add('active');
-    }
+   function switchTab(tab, btn) {
+  document.querySelectorAll('.quote-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.quote-tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  const form = document.querySelector('.quote-form-wrap');
+  if (tab === 'corporate') {
+    form.style.opacity = '0.3';
+    form.style.pointerEvents = 'none';
+    form.style.filter = 'blur(2px)';
+  } else {
+    form.style.opacity = '1';
+    form.style.pointerEvents = 'all';
+    form.style.filter = 'none';
+  }
+}
 
     /* ── Smooth scroll to quote form (offset for floating nav) ── */
     function scrollToQuote(e) {
