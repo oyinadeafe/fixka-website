@@ -51,7 +51,7 @@
 
     /* ── NAVBAR ── */
    nav {
-  position: fixed; top: 30px; left: 50%; right: auto;
+  position: fixed; top: 30px; left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 60px);
   max-width: 1200px;
@@ -451,7 +451,7 @@
     @media (max-width: 900px) {
       .how-grid, .plans-grid { grid-template-columns: 1fr; }
       .quote-inner, .workshop-inner { grid-template-columns: 1fr; }
-      nav { top: 16px; left: 16px; right: 16px; padding: 0 16px; }
+      nav { top: 16px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); padding: 0 16px; }
       .hero { padding: 120px 24px 0; min-height: auto; }
       .hero-inner { grid-template-columns: 1fr; }
       .hero-left { padding: 40px 0 32px; }
